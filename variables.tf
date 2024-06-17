@@ -1,12 +1,13 @@
 variable "namespaces" {
   description = "A map of namespace names and their properties"
   type = map(object({
-    name                     = string
-    location                 = string
-    sku                      = string
-    capacity                 = optional(number)
-    auto_inflate_enabled     = optional(bool)
-    maximum_throughput_units = optional(number)
+    name                          = string
+    location                      = string
+    sku                           = string
+    capacity                      = optional(number)
+    auto_inflate_enabled          = optional(bool)
+    maximum_throughput_units      = optional(number)
+    public_network_access_enabled = optional(bool)
   }))
 }
 

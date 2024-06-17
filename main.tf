@@ -1,14 +1,14 @@
 resource "azurerm_eventhub_namespace" "namespace" {
   for_each = var.namespaces
 
-  name                     = each.value.name
-  location                 = each.value.location
-  resource_group_name      = var.resource_group_name
-  sku                      = each.value.sku
-  capacity                 = each.value.capacity
-  auto_inflate_enabled     = each.value.auto_inflate_enabled
-  maximum_throughput_units = each.value.maximum_throughput_units
-
+  name                          = each.value.name
+  location                      = each.value.location
+  resource_group_name           = var.resource_group_name
+  sku                           = each.value.sku
+  capacity                      = each.value.capacity
+  auto_inflate_enabled          = each.value.auto_inflate_enabled
+  maximum_throughput_units      = each.value.maximum_throughput_units
+  public_network_access_enabled = each.value.public_network_access_enabled
 }
 
 resource "azurerm_eventhub" "eventhub" {

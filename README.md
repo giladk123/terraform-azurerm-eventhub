@@ -1,38 +1,53 @@
 ## Usage
 
 ```terraform
+
+locals {
+  eventhub = jsondecode(file("./ccoe/eventhub.json"))
+}
+
 module "eventhub" {
   source = "./module/eventhub" # Update this with the path to your module
 
-  resource_group_name = <resource group name>
+  resource_group_name = module.resource_group.resource_groups["we-ydev-azus-opdx-marketing-rg"].name
+  namespaces = local.eventhub.namespaces
+  eventhubs = local.eventhub.eventhubs
 
-  namespaces = {
-    namespace1 = {
-      name                     = "example-namespace1"
-      location                 = "westeurope"
-      sku                      = "Standard"
-      capacity                 = 1
-      auto_inflate_enabled     = false
-      maximum_throughput_units = 0
-    }
+  providers = {
+    azurerm = azurerm.subscription
   }
-
-  eventhubs = {
-    eventhub1 = {
-      name                = "example-eventhub1"
-      namespace_name      = "namespace1"
-      partitions          = 1
-      message_retention   = 1
-      capture_enabled     = false
-      capture_encoding    = "Avro"
-      blob_container_name = "example-container"
-      storage_account_id  = "<blob ID>"
-    }
-    
-  }
-  
   depends_on = [module.resource_group]
 }
+```
+
+JSON Example 
+
+```json
+{
+    "namespaces": {
+      "namespace1": {
+        "name": "example-namespace1",
+        "location": "westeurope",
+        "sku": "Standard",
+        "capacity": 1,
+        "auto_inflate_enabled": false,
+        "maximum_throughput_units": 0,
+        "public_network_access_enabled": false
+      }
+    },
+    "eventhubs": {
+      "eventhub1": {
+        "name": "example-eventhub1",
+        "namespace_name": "namespace1",
+        "partitions": 1,
+        "message_retention": 1,
+        "capture_enabled": false,
+        "capture_encoding": "Avro",
+        "blob_container_name": "example-container",
+        "storage_account_id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-resource-group/providers/Microsoft.Storage/storageAccounts/exampleaccount"
+      }
+    }
+  }
 ```
 
 Output Example
@@ -47,6 +62,14 @@ output "eventhub_ids" {
 output "eventhub_namespace_ids" {
   description = "The IDs of the Event Hub Namespaces"
   value       = { for ns in module.eventhub.eventhub_namespaces : ns.name => ns.id }
+}
+
+output "namespace_name" {
+  value = module.eventhub.eventhub_namespaces["namespace1"].name
+}
+
+output "eventhub_name" {
+  value = module.eventhub.eventhubs["eventhub1"].name
 }
 ```
 
